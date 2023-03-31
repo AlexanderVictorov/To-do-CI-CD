@@ -5,10 +5,11 @@ import { toasterConfigOption } from 'utils';
 import 'react-toastify/dist/ReactToastify.css';
 
 interface IFilters {
+  filter: string;
   filteredTodos: ITodo[];
 }
 
-export const TodoList: FC<IFilters> = ({ filteredTodos }) => {
+export const TodoList: FC<IFilters> = ({ filteredTodos, filter }) => {
   const { removeTodo, checkedCompletedTodo, setInputValue } = useTodoStore();
   const { inputValue } = useTodoStore();
 
@@ -16,7 +17,7 @@ export const TodoList: FC<IFilters> = ({ filteredTodos }) => {
     removeTodo(id);
     toast.warning(`Deleted todo: ${title}`, toasterConfigOption);
   };
-if(!filteredTodos.length) return <div> 🤷‍♂️Your to-do list is empty, you can add new tasks</div>;
+if(!filteredTodos.length) return <div> 🤷‍♂️Your {filter} to-do list is empty, you can add new tasks</div>;
   return (
     <ul>
       {filteredTodos?.map((todo: ITodo) => (

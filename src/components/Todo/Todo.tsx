@@ -5,6 +5,7 @@ import { BeatLoader } from 'react-spinners';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from 'react-toastify';
 import { toasterConfigOption } from 'utils';
+import FilteringTodos from 'components/FilteringTodos/FilteringTodos';
 
 export const Todo = () => {
   const { addTodo, setInputValue, getTodos } = useTodoStore();
@@ -13,7 +14,6 @@ export const Todo = () => {
   const loading = useTodoStore(state => state.loading);
 
   useEffect(() => {
-    console.log('useEffect');
     getTodos();
   }, [getTodos]);
 
@@ -35,23 +35,7 @@ export const Todo = () => {
 
   return (
     <div className='App'>
-      <div className='sortBtnContainer'>
-        <button
-          className='sortBtn'
-          disabled={filter === 'all'}
-          onClick={() => setFilter('all')}
-        >All
-        </button>
-        <button className='sortBtn' disabled={filter === 'uncompleted'} onClick={() => setFilter('uncompleted')}>Not
-          completed
-        </button>
-        <button
-          className='sortBtn'
-          disabled={filter === 'completed'}
-          onClick={() => setFilter('completed')}
-        >Completed
-        </button>
-      </div>
+      <FilteringTodos filter={filter} setFilter={setFilter}/>
       <h1>My To-do List</h1>
       <div className='addTodoBox'>
         <input
@@ -63,7 +47,7 @@ export const Todo = () => {
         <button className='add' onClick={() => handleAddTodo(inputValue)}>Add Todo</button>
       </div>
       <span className='required'>{!inputValue ? inputError : null}</span>
-      {loading ? <BeatLoader color='#36d7b7' /> : <TodoList filteredTodos={filteredTodos} />}
+      {loading ? <BeatLoader color='#36d7b7' /> : <TodoList filteredTodos={filteredTodos} filter={filter}/>}
       <ToastContainer />
     </div>
   );
