@@ -10,7 +10,7 @@ const $api:AxiosInstance = axios.create({
 $api.interceptors.response.use(
   (response: AxiosResponse) => {
     // Do something with the response data
-    console.log('Response was received:', response);
+    console.log('Response was received');
 
     // You must return the response object in order to continue the response
     return response;
@@ -20,4 +20,6 @@ $api.interceptors.response.use(
     console.error('Error in response interceptor:', error);
     return Promise.reject(error);
   }
-);
+)
+
+export default $api;

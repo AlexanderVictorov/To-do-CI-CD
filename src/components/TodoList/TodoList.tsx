@@ -1,75 +1,44 @@
-import React from 'react';
-import { Todo, useFilter, useTodoStore } from 'store';
+import React, { FC } from 'react';
+import { ITodo, useTodoStore } from 'store';
+import { toast } from 'react-toastify';
+import { toasterConfigOption } from 'utils';
+import 'react-toastify/dist/ReactToastify.css';
 
-export const TodoList = () => {
-  const { addTodo, removeTodo, checkedCompletedTodo, setInputValue } = useTodoStore();
-  const { inputValue, inputError } = useTodoStore();
-  const { filter, setFilter } = useFilter();
+interface IFilters {
+  filteredTodos: ITodo[];
+}
 
-  const todos = useTodoStore((state) => {
-    switch (filter) {
-      case 'completed':
-        return state.todos.filter(todo => todo.completed);
-      case 'uncompleted':
-        return state.todos.filter(todo => !todo.completed);
-      default:
-        return state.todos;
-    }
-  });
+export const TodoList: FC<IFilters> = ({ filteredTodos }) => {
+  const { removeTodo, checkedCompletedTodo, setInputValue } = useTodoStore();
+  const { inputValue } = useTodoStore();
 
+  const handleRemoveTodo = (id: number, title: string) => {
+    removeTodo(id);
+    toast.warning(`Deleted todo: ${title}`, toasterConfigOption);
+  };
+if(!filteredTodos.length) return <div> 🤷‍♂️Your to-do list is empty, you can add new tasks</div>;
   return (
-    <div className='App'>
-      <div className='sortBtnContainer'>
-        <button
-          className='sortBtn'
-          disabled={filter === 'all'}
-          onClick={() => setFilter('all')}
-        >All
-        </button>
-        <button className='sortBtn' disabled={filter === 'uncompleted'} onClick={() => setFilter('uncompleted')}>Not
-          completed
-        </button>
-        <button
-          className='sortBtn'
-          disabled={filter === 'completed'}
-          onClick={() => setFilter('completed')}
-        >Completed
-        </button>
-      </div>
-      <h1>My To-do List</h1>
-      <div className='addTodoBox'>
-        <input
-          className={inputError ? 'error' : ''}
-          type='text'
-          value={inputValue}
-          onChange={(event) => setInputValue(event.target.value)}
-        />
-        <button className='add' onClick={() => addTodo(inputValue)}>Add Todo</button>
-      </div>
-      <span className='required'>{!inputValue ? inputError : null}</span>
-      <ul>
-        {todos.map((todo: Todo) => (
-          <div className='todoList' key={todo.id}>
-            <li onClick={() => checkedCompletedTodo(todo.id)}>
-              <div>
-                <input
-                  type='checkbox'
-                  checked={todo.completed}
-                  placeholder='type your new todo'
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                />
-                <span className={todo.completed ? 'completed' : ''}>
+    <ul>
+      {filteredTodos?.map((todo: ITodo) => (
+        <div className='todoList' key={todo.id}>
+          <li onClick={() => checkedCompletedTodo(todo.id)}>
+            <div>
+              <input
+                type='checkbox'
+                checked={todo.completed}
+                placeholder='type your new todo'
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+              />
+              <span className={todo.completed ? 'completed' : ''}>
             {todo.title}
           </span>
-              </div>
-            </li>
-            <button className='delete' onClick={() => removeTodo(todo.id)}>Delete</button>
-          </div>
+            </div>
+          </li>
+          <button className='delete' onClick={() => handleRemoveTodo(todo.id, todo.title)}>Delete</button>
+        </div>
 
-        ))}
-      </ul>
-    </div>
-
+      ))}
+    </ul>
   );
 };

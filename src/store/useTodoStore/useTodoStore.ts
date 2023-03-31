@@ -1,58 +1,94 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
+import $api from 'services/apiService';
 
-export interface Todo {
+export interface ITodo {
   id: number;
   title: string;
   completed: boolean;
 }
 
 interface ITodoStore {
-  todos: Todo[];
+  todos: ITodo[];
   inputValue: string;
   inputError: string;
+  loading: boolean;
   addTodo: (title: string) => void;
   removeTodo: (id: number) => void;
   checkedCompletedTodo: (id: number) => void;
   setInputValue: (value: string) => void;
+  getTodos: () => Promise<void>;
 }
 
 export const useTodoStore = create<ITodoStore>()(
   devtools(
-      (set) => ({
-        todos: [
-          { id: 1, title: 'Learn React', completed: false },
-          { id: 2, title: 'Learn TypeScript', completed: false },
-          { id: 3, title: 'Build a todo list app', completed: false },
-        ],
-        inputValue: '',
-        inputError: '',
-        setInputValue: (value: string) => set((state) => ({
+    (set, get) => ({
+      todos: [],
+      inputValue: '',
+      inputError: '',
+      loading: false,
+      setInputValue: (value: string) =>
+        set((state) => ({
           ...state,
           inputValue: value,
         })),
-        addTodo: (title: string) => set((state) => {
-          if (!title) {
-            return {
-              ...state,
-              inputError: 'Please enter a title',
-            };
-          }
-          return {
-            todos: [
-              ...state.todos,
-              { id: Date.now(), title, completed: false },
-            ],
-            inputValue: '',
-            inputError: '',
-          };
-        }),
-        removeTodo: (id: number) => set((state) => ({
+      addTodo: async (title: string) => {
+        if (!title) {
+          set((state) => ({
+            ...state,
+            inputError: 'Please enter a title',
+          }));
+          return;
+        }
+        set((state) => ({...state, loading: true}));
+        const response = await $api.post('todos', { title, completed: false });
+        const todo = response.data;
+        set((state) => ({
+          ...state,
+          todos: [...state.todos, todo],
+          inputValue: '',
+          inputError: '',
+        }));
+        set((state) => ({...state, loading: false}));
+      },
+      removeTodo: async (id: number) => {
+        set((state) => ({...state, loading: true}));
+        await $api.delete(`todos/${id}`);
+        set((state) => ({
+          ...state,
           todos: state.todos.filter((todo) => todo.id !== id),
-        })),
-        checkedCompletedTodo: (id: number) => set((state) => ({
-          todos: state.todos.map((todo) => todo.id === id ? { ...todo, completed: !todo.completed } : todo),
-        })),
-      }),
-  )
+        }));
+        set((state) => ({...state, loading: false}));
+      },
+      checkedCompletedTodo: async (id: number) => {
+        set((state) => ({
+          ...state,
+          loading: true,
+          todos: state.todos.map((todo) => {
+            if (todo?.id === id) {
+              const updatedTodo = { ...todo, completed: !todo.completed };
+              $api.put(`todos/${id}`, updatedTodo);
+              return updatedTodo;
+            }
+            return todo || {};
+          }),
+        }));
+        set((state) => ({ ...state, loading: false }));
+      },
+      getTodos: async () => {
+        try {
+          set((state) => ({...state, loading: true}));
+          const response = await $api.get('todos');
+          const todos = response.data;
+          set((state) => ({
+            ...state,
+            todos,
+          }));
+          set((state) => ({...state, loading: false}));
+        } catch (error) {
+          console.log(error);
+        }
+      },
+    }),
+  ),
 );
