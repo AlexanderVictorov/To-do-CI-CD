@@ -1,8 +1,7 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { BASE_URL } from 'config';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
-// Create a new instance of Axios
-const $api:AxiosInstance = axios.create({
+export const $api:AxiosInstance = axios.create({
   withCredentials: true,
   baseURL: BASE_URL,
 });
@@ -21,5 +20,3 @@ $api.interceptors.response.use(
     return Promise.reject(error);
   }
 )
-
-export default $api;

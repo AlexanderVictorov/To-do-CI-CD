@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import $api from 'services/apiService';
+import { $api } from 'services';
 
 export interface ITodo {
   id: number;
@@ -8,7 +8,7 @@ export interface ITodo {
   completed: boolean;
 }
 
-interface ITodoStore {
+export interface ITodoStore {
   todos: ITodo[];
   inputValue: string;
   inputError: string;

@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 
-interface IFilter {
+export interface IFilter {
   filter: string;
   setFilter: (filter: string) => void;
 }
 
-export const useFilter = create<IFilter>((set, get) => ({
+export const useFilter = create<IFilter>((set) => ({
   filter: 'all',
   setFilter: (filter) => set({ filter }),
 }));
