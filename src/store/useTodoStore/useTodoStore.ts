@@ -36,7 +36,7 @@ export const useTodoStore = create<ITodoStore>()(
         if (!title) {
           set((state) => ({
             ...state,
-            inputError: 'Please enter a title',
+            inputError: 'Todo name cannot be empty',
           }));
           return;
         }
