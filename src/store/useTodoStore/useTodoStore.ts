@@ -22,7 +22,7 @@ export interface ITodoStore {
 
 export const useTodoStore = create<ITodoStore>()(
   devtools(
-    (set, get) => ({
+    (set) => ({
       todos: [],
       inputValue: '',
       inputError: '',
