@@ -1,0 +1,45 @@
+name: GitHub Actions Demo
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  explore-github-actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies and build
+        run: |
+          npm install
+          npm run build
+        env:
+          CI: true
+      - name: Start the app
+        run: npm start
+      - name: Start the server
+        run: npm run server
+      - name: Run tests
+        run: npm test
+      - name: Eject the app
+        run: npm run eject
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      - name: Display job status
+        run: echo "🍏 This job's status is ${{ job.status }}."
+
+  create-pull-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Merge to main
+        uses: peter-evans/create-pull-request@v3
+        with:
+          base: main
+          title: "Merge dev to main"
+          body: "Automatically created pull request"
+          branch: dev
