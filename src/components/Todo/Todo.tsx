@@ -30,6 +30,7 @@ export const Todo = () => {
 
   const handleAddTodo = (title: string) => {
     addTodo(title);
+    if (!title) return;
     toast.success(` Added new todo: ${title}`, toasterConfigOption);
   };
 
