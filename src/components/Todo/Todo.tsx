@@ -39,15 +39,17 @@ export const Todo = () => {
       <FilteringTodos filter={filter} setFilter={setFilter}/>
       <h1>My To-do List</h1>
       <div className='addTodoBox'>
-        <input
-          className={inputError ? 'error' : ''}
-          type='text'
-          value={inputValue}
-          onChange={(event) => setInputValue(event.target.value)}
-        />
+        <div className='addTodoBoxInputContainer'>
+          <input
+            className={inputError ? 'error' : ''}
+            type='text'
+            value={inputValue}
+            onChange={(event) => setInputValue(event.target.value)}
+          />
+          <span className='required'>{!inputValue ? inputError : null}</span>
+        </div>
         <button className='add' onClick={() => handleAddTodo(inputValue)}>Add Todo</button>
       </div>
-      <span className='required'>{!inputValue ? inputError : null}</span>
       {loading ? <BeatLoader color='#36d7b7' /> : <TodoList filteredTodos={filteredTodos} filter={filter}/>}
       <ToastContainer />
     </div>
