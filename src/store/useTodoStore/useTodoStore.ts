@@ -53,11 +53,12 @@ export const useTodoStore = create<ITodoStore>()(
       },
       removeTodo: async (id: number) => {
         set((state) => ({...state, loading: true}));
-        await $api.delete(`todos/${id}`);
         set((state) => ({
           ...state,
           todos: state.todos.filter((todo) => todo.id !== id),
         }));
+        await $api.delete(`todos/${id}`);
+
         set((state) => ({...state, loading: false}));
       },
       checkedCompletedTodo: async (id: number) => {

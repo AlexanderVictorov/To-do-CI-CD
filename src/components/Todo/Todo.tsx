@@ -36,7 +36,7 @@ export const Todo = () => {
 
   return (
     <div className='App'>
-      <FilteringTodos filter={filter} setFilter={setFilter}/>
+      <FilteringTodos filter={filter} setFilter={setFilter} />
       <h1>My To-do List</h1>
       <div className='addTodoBox'>
         <div className='addTodoBoxInputContainer'>
@@ -50,7 +50,7 @@ export const Todo = () => {
         </div>
         <button className='add' onClick={() => handleAddTodo(inputValue)}>Add Todo</button>
       </div>
-      {loading ? <BeatLoader color='#36d7b7' /> : <TodoList filteredTodos={filteredTodos} filter={filter}/>}
+      {loading && <BeatLoader color='#36d7b7' />} <TodoList filteredTodos={filteredTodos} filter={filter} />
       <ToastContainer />
     </div>
   );
